@@ -10,7 +10,7 @@ fun getApiConfig(): ApiConfig {
     )
     return ApiConfig.Builder()
         .baseUrl("https://hiring.revolut.codes/")
-        .sslPinning(true)
+        .sslPinning(false)
         .certificatePins(map)
         .build()
 }
