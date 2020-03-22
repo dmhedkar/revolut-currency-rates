@@ -3,23 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        app:srcCompat="@drawable/ic_launcher_background" />
 
     <EditText
         android:id="@+id/currencyValue"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:ems="5"
+        android:focusableInTouchMode="true"
         android:inputType="numberDecimal"
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,19 +30,19 @@
         tools:text="200.00" />
 
     <TextView
-        android:id="@+id/currencyName"
+        android:id="@+id/currencyCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="sans-serif-black"
-        app:layout_constraintBottom_toTopOf="@+id/currencyType"
+        app:layout_constraintBottom_toTopOf="@+id/currencyName"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="USD" />
 
     <TextView
-        android:id="@+id/currencyType"
+        android:id="@+id/currencyName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -48,6 +50,6 @@
         android:fontFamily="sans-serif-condensed-light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/currencyName"
+        app:layout_constraintTop_toBottomOf="@+id/currencyCode"
         tools:text="USD Dollar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

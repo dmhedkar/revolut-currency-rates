@@ -11,12 +11,18 @@ import com.revolut.R
 import com.revolut.dto.CurrencyModel
 import com.revolut.ui.CurrencyRatesAdapter.RatesViewHolder
 
-class CurrencyRatesAdapter(private var list: List<CurrencyModel>) :
-    RecyclerView.Adapter<RatesViewHolder>() {
-    class RatesViewHolder(view: View) : ViewHolder(view) {
+class CurrencyRatesAdapter(
+    private var list: Array<CurrencyModel>,
+    private val itemClick: (Int) -> Unit
+) : RecyclerView.Adapter<RatesViewHolder>() {
+    inner class RatesViewHolder(view: View) : ViewHolder(view) {
+        val currencyCode: TextView = view.findViewById(R.id.currencyCode)
         val currencyName: TextView = view.findViewById(R.id.currencyName)
-        val currencyType: TextView = view.findViewById(R.id.currencyType)
         val currencyValue: EditText = view.findViewById(R.id.currencyValue)
+
+        init {
+            view.setOnClickListener { itemClick.invoke(layoutPosition) }
+        }
     }
 
     override fun onCreateViewHolder(
@@ -27,16 +33,16 @@ class CurrencyRatesAdapter(private var list: List<CurrencyModel>) :
     )
 
     override fun onBindViewHolder(holder: RatesViewHolder, position: Int) {
-        holder.currencyName.text = list[position].currency
+        holder.currencyCode.text = list[position].currency
         holder.currencyValue.setText(list[position].rate.toString())
-
+        holder.currencyName.text = list[position].currencyText
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    fun updateCurrencyRates(list: List<CurrencyModel>) {
+    fun updateCurrencyRates(list: Array<CurrencyModel>) {
         this.list = list
         notifyDataSetChanged()
     }
