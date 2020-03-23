@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 class CurrencyRateObserver constructor(
     private val model: CurrencyRatesViewModel,
-    private val call: (List<CurrencyModel>) -> Unit
+    private val call: (Array<CurrencyModel>) -> Unit
 ) :
     LifecycleObserver {
     lateinit var baseCurrency: String
@@ -32,7 +32,7 @@ class CurrencyRateObserver constructor(
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { list: List<CurrencyModel> ->
+                    { list: Array<CurrencyModel> ->
                         call.invoke(list)
                     },
                     { t: Throwable ->

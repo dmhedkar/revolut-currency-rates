@@ -50,6 +50,6 @@ class CurrencyRatesAdapter(
     fun updateCurrencyRates(index: Int, list: Array<CurrencyModel>) {
         this.list = list
         notifyItemMoved(index, 0)
-        notifyItemRangeChanged(1, this.list.size)
+        notifyItemRangeChanged(1, index)
     }
 }

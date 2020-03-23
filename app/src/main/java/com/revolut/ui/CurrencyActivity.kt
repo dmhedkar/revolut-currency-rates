@@ -5,17 +5,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.revolut.Injection
-import com.revolut.R
+import com.revolut.*
 import com.revolut.api.getApiConfig
-import com.revolut.dto.CurrencyModel
-import com.revolut.getCurrencyArray
 import kotlinx.android.synthetic.main.activity_currency.*
 
 class CurrencyActivity : AppCompatActivity() {
     lateinit var currencyRatesAdapter: CurrencyRatesAdapter
     lateinit var currencyRateObserver: CurrencyRateObserver
-    private var currentList = mutableListOf<CurrencyModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +22,7 @@ class CurrencyActivity : AppCompatActivity() {
         }
         list.adapter = currencyRatesAdapter
         currencyRateObserver = CurrencyRateObserver(model) {
-            val arrayCurrency = getCurrencyArray(currentList, it)
-            currentList = arrayCurrency.toMutableList()
-            currencyRatesAdapter.updateCurrencyRates(arrayCurrency)
+            currencyRatesAdapter.updateCurrencyRates(it)
         }
         currencyRateObserver.baseCurrency = "EUR"
         lifecycle.addObserver(currencyRateObserver)
@@ -36,10 +30,9 @@ class CurrencyActivity : AppCompatActivity() {
 
 
     private fun updateList(index: Int) {
-        val item = currentList.removeAt(index)
-        currencyRateObserver.baseCurrency = item.currency
-        currentList.add(0, item)
-        currencyRatesAdapter.updateCurrencyRates(index, currentList.toTypedArray())
+        currencyRateObserver.baseCurrency = getItem(index).currency
+        moveToTop(index)
+        currencyRatesAdapter.updateCurrencyRates(index, getCurrencyArray())
         list.scrollToPosition(0)
     }
 

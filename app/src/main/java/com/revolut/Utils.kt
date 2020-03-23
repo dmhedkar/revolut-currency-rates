@@ -37,7 +37,9 @@ enum class Currency {
     USD
 }
 
-fun mapCurrencyList(respo: CurrencyRatesResponse): List<CurrencyModel> {
+private var currentList = mutableListOf<CurrencyModel>()
+
+fun mapCurrencyList(respo: CurrencyRatesResponse): Array<CurrencyModel> {
     val list = mutableListOf<CurrencyModel>()
     list.add(CurrencyModel(Currency.EUR.name, respo.rates.EUR, "Euro"))
     list.add(CurrencyModel(Currency.AUD.name, respo.rates.AUD, "Australian Dollar"))
@@ -71,21 +73,24 @@ fun mapCurrencyList(respo: CurrencyRatesResponse): List<CurrencyModel> {
     list.add(CurrencyModel(Currency.THB.name, respo.rates.THB, "Baht"))
     list.add(CurrencyModel(Currency.USD.name, respo.rates.USD, "US Dollar"))
     list.find { it.currency == respo.baseCurrency }?.rate = 1.0
-    return list
+    updateCurrencyArray(list)
+    return getCurrencyArray()
 }
 
 
-fun getCurrencyArray(
-    currentList: List<CurrencyModel>,
-    remoteList: List<CurrencyModel>
-): Array<CurrencyModel> {
-    if (currentList.isEmpty()) {
-        return remoteList.toTypedArray()
-    } else {
-        for (item in currentList) {
-            val find = remoteList.find { t -> t.currency == item.currency }
-            find?.let { t -> item.rate = t.rate }
-        }
+fun getItem(index: Int) = currentList[index]
+
+fun getCurrencyArray() = currentList.toTypedArray()
+
+fun moveToTop(index: Int) {
+    val item = currentList.removeAt(index)
+    currentList.add(0, item)
+}
+
+private fun updateCurrencyArray(remoteList: List<CurrencyModel>) {
+    if (currentList.isEmpty()) currentList = remoteList.toMutableList()
+    for (item in currentList) {
+        val find = remoteList.find { t -> t.currency == item.currency }
+        find?.let { t -> item.rate = t.rate }
     }
-    return currentList.toTypedArray()
 }
