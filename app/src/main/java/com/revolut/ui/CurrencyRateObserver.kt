@@ -3,6 +3,7 @@ package com.revolut.ui
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.revolut.clearList
 import com.revolut.dto.CurrencyModel
 import com.revolut.mapCurrencyList
 import io.reactivex.Observable
@@ -29,7 +30,7 @@ class CurrencyRateObserver constructor(
                         .takeUntil { it.baseCurrency == baseCurrency }
                         .map { return@map mapCurrencyList(it) }
                 }
-                .debounce(500, TimeUnit.MILLISECONDS)
+                .debounce(1L, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { list: Array<CurrencyModel> ->
@@ -44,5 +45,6 @@ class CurrencyRateObserver constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun stopFetchingRates() {
         compositeDisposable.clear()
+        clearList()
     }
 }

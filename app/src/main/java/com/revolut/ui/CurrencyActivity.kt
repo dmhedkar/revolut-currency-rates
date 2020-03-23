@@ -17,7 +17,7 @@ class CurrencyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_currency)
         list.setHasFixedSize(true)
-        currencyRatesAdapter = CurrencyRatesAdapter(emptyArray()) {
+        currencyRatesAdapter = CurrencyRatesAdapter {
             updateList(it)
         }
         list.adapter = currencyRatesAdapter

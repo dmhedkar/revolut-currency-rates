@@ -1,5 +1,6 @@
 package com.revolut.ui
 
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.revolut.R
 import com.revolut.dto.CurrencyModel
 import com.revolut.ui.CurrencyRatesAdapter.RatesViewHolder
+import kotlin.math.roundToInt
 
 class CurrencyRatesAdapter(
-    private var list: Array<CurrencyModel>,
     private val itemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<RatesViewHolder>() {
+    private var list: Array<CurrencyModel> = emptyArray()
+
     inner class RatesViewHolder(view: View) : ViewHolder(view) {
         val currencyCode: TextView = view.findViewById(R.id.currencyCode)
         val currencyName: TextView = view.findViewById(R.id.currencyName)
@@ -34,7 +37,12 @@ class CurrencyRatesAdapter(
 
     override fun onBindViewHolder(holder: RatesViewHolder, position: Int) {
         holder.currencyCode.text = list[position].currency
-        holder.currencyValue.setText(list[position].rate.toString())
+        if (!TextUtils.equals(
+                holder.currencyValue.text,
+                list[position].rate.roundToInt().toString()
+            )
+        )
+            holder.currencyValue.setText(list[position].rate.roundToInt().toString())
         holder.currencyName.text = list[position].currencyText
     }
 
