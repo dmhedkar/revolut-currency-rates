@@ -35,13 +35,11 @@ class CurrencyActivity : AppCompatActivity() {
     }
 
 
-    private fun updateList(it: Int) {
-        val item = currentList.removeAt(it)
+    private fun updateList(index: Int) {
+        val item = currentList.removeAt(index)
         currencyRateObserver.baseCurrency = item.currency
         currentList.add(0, item)
-        currencyRatesAdapter.updateCurrencyRates(currentList.toTypedArray())
-        currencyRatesAdapter.notifyItemMoved(it, 0)
-        currencyRatesAdapter.notifyItemRangeChanged(1, currentList.size)
+        currencyRatesAdapter.updateCurrencyRates(index, currentList.toTypedArray())
         list.scrollToPosition(0)
     }
 

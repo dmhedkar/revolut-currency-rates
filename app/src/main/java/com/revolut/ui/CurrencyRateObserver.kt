@@ -12,31 +12,33 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class CurrencyRateObserver constructor(
-        private val model: CurrencyRatesViewModel,
-        private val call: (List<CurrencyModel>) -> Unit
+    private val model: CurrencyRatesViewModel,
+    private val call: (List<CurrencyModel>) -> Unit
 ) :
-        LifecycleObserver {
+    LifecycleObserver {
     lateinit var baseCurrency: String
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun fetchRates() {
         compositeDisposable.add(
-                Observable.interval(0L, 1L, TimeUnit.SECONDS)
-                        .subscribeOn(Schedulers.io())
-                        .switchMap {
-                            return@switchMap model.fetchCurrencyRates(baseCurrency)
-                                    .map { return@map mapCurrencyList(it) }
-                        }
-                        .debounce(500, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                { list: List<CurrencyModel> ->
-                                    call.invoke(list)
-                                },
-                                { t: Throwable ->
-                                    t.printStackTrace()
-                                }))
+            Observable.interval(0L, 1L, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .switchMap {
+                    return@switchMap model.fetchCurrencyRates(baseCurrency)
+                        .takeUntil { it.baseCurrency == baseCurrency }
+                        .map { return@map mapCurrencyList(it) }
+                }
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { list: List<CurrencyModel> ->
+                        call.invoke(list)
+                    },
+                    { t: Throwable ->
+                        t.printStackTrace()
+                    })
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
