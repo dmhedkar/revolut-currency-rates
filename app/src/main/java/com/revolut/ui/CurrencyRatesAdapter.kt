@@ -51,8 +51,13 @@ class CurrencyRatesAdapter(
     }
 
     fun updateCurrencyRates(list: Array<CurrencyModel>) {
+        val empty = this.list.isEmpty()
         this.list = list
-        notifyDataSetChanged()
+        if (empty) {
+            notifyDataSetChanged()
+        } else {
+            notifyItemRangeChanged(0, list.size)
+        }
     }
 
     fun updateCurrencyRates(index: Int, list: Array<CurrencyModel>) {
