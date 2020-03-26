@@ -1,8 +1,9 @@
 package com.revolut.repository
 
 import com.revolut.api.CurrencyRatesService
+import javax.inject.Inject
 
-class CurrencyRatesRepository(private val currencyRatesService: CurrencyRatesService) {
+class CurrencyRatesRepository @Inject constructor(private val currencyRatesService: CurrencyRatesService) {
     fun fetchCurrencyRates(baseCurrency: String) =
         currencyRatesService.getCurrencyRates(baseCurrency)
 }

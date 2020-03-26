@@ -3,17 +3,26 @@ package com.revolut.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.revolut.*
-import com.revolut.api.getApiConfig
+import com.revolut.R
+import com.revolut.di.factory.ViewModelFactory
+import com.revolut.getCurrencyArray
+import com.revolut.getItem
+import com.revolut.moveToTop
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_currency.*
+import javax.inject.Inject
 
 class CurrencyActivity : AppCompatActivity() {
     lateinit var currencyRatesAdapter: CurrencyRatesAdapter
     lateinit var currencyRateObserver: CurrencyRateObserver
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val model: CurrencyRatesViewModel by viewModels { viewModelFactory }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_currency)
         list.setHasFixedSize(true)
@@ -34,14 +43,6 @@ class CurrencyActivity : AppCompatActivity() {
         moveToTop(index)
         currencyRatesAdapter.updateCurrencyRates(index, getCurrencyArray())
         list.scrollToPosition(0)
-    }
-
-    private val model: CurrencyRatesViewModel by viewModels {
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return CurrencyRatesViewModel(Injection.provideRepository(getApiConfig())) as T
-            }
-        }
     }
 }
 

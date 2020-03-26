@@ -25,8 +25,8 @@ class CurrencyRateObserver constructor(
         compositeDisposable.add(
             Observable.interval(0L, 1L, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
-                .switchMap {
-                    return@switchMap model.fetchCurrencyRates(baseCurrency)
+                .flatMap {
+                    return@flatMap model.fetchCurrencyRates(baseCurrency)
                         .takeUntil { it.baseCurrency == baseCurrency }
                         .map { return@map mapCurrencyList(it) }
                 }
