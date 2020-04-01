@@ -1,6 +1,5 @@
 package com.revolut.ui
 
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +8,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.revolut.R
-import com.revolut.dto.CurrencyModel
-import com.revolut.ui.CurrencyRatesAdapter.RatesViewHolder
+import com.revolut.cache.CurrencyRateEntity
 import kotlin.math.roundToInt
 
-class CurrencyRatesAdapter(
+class RatesAdapter(
     private val itemClick: (Int) -> Unit
-) : RecyclerView.Adapter<RatesViewHolder>() {
-    private var list: Array<CurrencyModel> = emptyArray()
+) : RecyclerView.Adapter<RatesAdapter.RatesViewHolder>() {
+    private var list: List<CurrencyRateEntity> = emptyList()
+
+    private var defaultMultiplier = 100
+
 
     inner class RatesViewHolder(view: View) : ViewHolder(view) {
         val currencyCode: TextView = view.findViewById(R.id.currencyCode)
@@ -24,7 +25,12 @@ class CurrencyRatesAdapter(
         val currencyValue: EditText = view.findViewById(R.id.currencyValue)
 
         init {
-            view.setOnClickListener { itemClick.invoke(layoutPosition) }
+            view.setOnClickListener {
+                if (layoutPosition > 0) {
+                    moveToTop(layoutPosition)
+                    itemClick.invoke(layoutPosition)
+                }
+            }
         }
     }
 
@@ -36,21 +42,19 @@ class CurrencyRatesAdapter(
     )
 
     override fun onBindViewHolder(holder: RatesViewHolder, position: Int) {
-        holder.currencyCode.text = list[position].currency
-        if (!TextUtils.equals(
-                holder.currencyValue.text,
-                list[position].rate.roundToInt().toString()
-            )
+        holder.currencyCode.text = list[position].currencyCode
+        holder.currencyValue.setText(
+            (list[position].currencyRate * defaultMultiplier).roundToInt().toString()
         )
-            holder.currencyValue.setText(list[position].rate.roundToInt().toString())
-        holder.currencyName.text = list[position].currencyText
+        holder.currencyName.text = list[position].currencyName
+
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    fun updateCurrencyRates(list: Array<CurrencyModel>) {
+    fun updateCurrencyRates(list: List<CurrencyRateEntity>) {
         val empty = this.list.isEmpty()
         this.list = list
         if (empty) {
@@ -60,9 +64,13 @@ class CurrencyRatesAdapter(
         }
     }
 
-    fun updateCurrencyRates(index: Int, list: Array<CurrencyModel>) {
-        this.list = list
-        notifyItemMoved(index, 0)
-        notifyItemRangeChanged(1, index)
+    fun moveToTop(index: Int) {
+        val mutableList = list.toMutableList()
+        val element = mutableList.removeAt(index)
+        defaultMultiplier = (defaultMultiplier * element.currencyRate).toInt()
+        mutableList.add(0, element)
+        list = mutableList
     }
+
+    fun getItems() = list
 }
