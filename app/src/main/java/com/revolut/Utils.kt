@@ -1,7 +1,7 @@
 package com.revolut
 
 import com.revolut.api.CurrencyRatesResponse
-import com.revolut.dto.CurrencyModel
+import com.revolut.cache.CurrencyRateEntity
 
 enum class Currency {
     EUR,
@@ -37,68 +37,39 @@ enum class Currency {
     USD
 }
 
-private var currentList = mutableListOf<CurrencyModel>()
-
-var defaultValue = 100
-
-fun mapCurrencyList(respo: CurrencyRatesResponse): Array<CurrencyModel> {
-    val list = mutableListOf<CurrencyModel>()
-    list.add(CurrencyModel(Currency.EUR.name, defaultValue * respo.rates.EUR, "Euro"))
-    list.add(CurrencyModel(Currency.AUD.name, defaultValue * respo.rates.AUD, "Australian Dollar"))
-    list.add(CurrencyModel(Currency.BGN.name, defaultValue * respo.rates.BGN, "Bulgarian Lev"))
-    list.add(CurrencyModel(Currency.BRL.name, defaultValue * respo.rates.BRL, "Brazilian Real"))
-    list.add(CurrencyModel(Currency.CAD.name, defaultValue * respo.rates.CAD, "Canadian Dollar"))
-    list.add(CurrencyModel(Currency.CHF.name, defaultValue * respo.rates.CHF, "Swiss Franc"))
-    list.add(CurrencyModel(Currency.CNY.name, defaultValue * respo.rates.CNY, "Yuan Renminbi"))
-    list.add(CurrencyModel(Currency.CZK.name, defaultValue * respo.rates.CZK, "Czech Koruna"))
-    list.add(CurrencyModel(Currency.DKK.name, defaultValue * respo.rates.DKK, "Danish Krone"))
-    list.add(CurrencyModel(Currency.GBP.name, defaultValue * respo.rates.GBP, "Pound Sterling"))
-    list.add(CurrencyModel(Currency.HKD.name, defaultValue * respo.rates.HKD, "Hong Kong Dollar"))
-    list.add(CurrencyModel(Currency.HRK.name, defaultValue * respo.rates.HRK, "Kuna"))
-    list.add(CurrencyModel(Currency.HUF.name, defaultValue * respo.rates.HUF, "Forint"))
-    list.add(CurrencyModel(Currency.IDR.name, defaultValue * respo.rates.IDR, "Rupiah"))
-    list.add(CurrencyModel(Currency.ILS.name, defaultValue * respo.rates.ILS, "New Israeli Sheqel"))
-    list.add(CurrencyModel(Currency.INR.name, defaultValue * respo.rates.INR, "Indian Rupee"))
-    list.add(CurrencyModel(Currency.ISK.name, defaultValue * respo.rates.ISK, "Iceland Krona"))
-    list.add(CurrencyModel(Currency.JPY.name, defaultValue * respo.rates.JPY, "Yen"))
-    list.add(CurrencyModel(Currency.KRW.name, defaultValue * respo.rates.KRW, "Won"))
-    list.add(CurrencyModel(Currency.MXN.name, defaultValue * respo.rates.MXN, "Mexican Peso"))
-    list.add(CurrencyModel(Currency.MYR.name, defaultValue * respo.rates.MYR, "Malaysian Ringgit"))
-    list.add(CurrencyModel(Currency.NOK.name, defaultValue * respo.rates.NOK, "Norwegian Krone"))
-    list.add(CurrencyModel(Currency.NZD.name, defaultValue * respo.rates.NZD, "New Zealand Dollar"))
-    list.add(CurrencyModel(Currency.PHP.name, defaultValue * respo.rates.PHP, "Philippine Peso"))
-    list.add(CurrencyModel(Currency.PLN.name, defaultValue * respo.rates.PLN, "Zloty"))
-    list.add(CurrencyModel(Currency.RON.name, defaultValue * respo.rates.RON, "Romanian Leu"))
-    list.add(CurrencyModel(Currency.RUB.name, defaultValue * respo.rates.RUB, "Russian Ruble"))
-    list.add(CurrencyModel(Currency.SEK.name, defaultValue * respo.rates.SEK, "Swedish Krona"))
-    list.add(CurrencyModel(Currency.SGD.name, defaultValue * respo.rates.SGD, "Singapore Dollar"))
-    list.add(CurrencyModel(Currency.THB.name, defaultValue * respo.rates.THB, "Baht"))
-    list.add(CurrencyModel(Currency.USD.name, defaultValue * respo.rates.USD, "US Dollar"))
-    list.find { it.currency == respo.baseCurrency }?.rate = defaultValue.toDouble()
-    updateCurrencyArray(list)
-    return getCurrencyArray()
-}
-
-
-fun getItem(index: Int) = currentList[index]
-
-fun getCurrencyArray() = currentList.toTypedArray()
-
-fun moveToTop(index: Int) {
-    val item = currentList.removeAt(index)
-    defaultValue = item.rate.toInt()
-    currentList.add(0, item)
-}
-
-fun clearList() {
-    defaultValue = 100
-    currentList.clear()
-}
-
-private fun updateCurrencyArray(remoteList: List<CurrencyModel>) {
-    if (currentList.isEmpty()) currentList = remoteList.toMutableList()
-    for (item in currentList) {
-        val find = remoteList.find { t -> t.currency == item.currency }
-        find?.let { t -> item.rate = t.rate }
-    }
+fun currencyList(respo: CurrencyRatesResponse): MutableList<CurrencyRateEntity> {
+    val list = mutableListOf<CurrencyRateEntity>()
+    list.add(CurrencyRateEntity(Currency.EUR.name, respo.rates.EUR, "Euro"))
+    list.add(CurrencyRateEntity(Currency.AUD.name, respo.rates.AUD, "Australian Dollar"))
+    list.add(CurrencyRateEntity(Currency.BGN.name, respo.rates.BGN, "Bulgarian Lev"))
+    list.add(CurrencyRateEntity(Currency.BRL.name, respo.rates.BRL, "Brazilian Real"))
+    list.add(CurrencyRateEntity(Currency.CAD.name, respo.rates.CAD, "Canadian Dollar"))
+    list.add(CurrencyRateEntity(Currency.CHF.name, respo.rates.CHF, "Swiss Franc"))
+    list.add(CurrencyRateEntity(Currency.CNY.name, respo.rates.CNY, "Yuan Renminbi"))
+    list.add(CurrencyRateEntity(Currency.CZK.name, respo.rates.CZK, "Czech Koruna"))
+    list.add(CurrencyRateEntity(Currency.DKK.name, respo.rates.DKK, "Danish Krone"))
+    list.add(CurrencyRateEntity(Currency.GBP.name, respo.rates.GBP, "Pound Sterling"))
+    list.add(CurrencyRateEntity(Currency.HKD.name, respo.rates.HKD, "Hong Kong Dollar"))
+    list.add(CurrencyRateEntity(Currency.HRK.name, respo.rates.HRK, "Kuna"))
+    list.add(CurrencyRateEntity(Currency.HUF.name, respo.rates.HUF, "Forint"))
+    list.add(CurrencyRateEntity(Currency.IDR.name, respo.rates.IDR, "Rupiah"))
+    list.add(CurrencyRateEntity(Currency.ILS.name, respo.rates.ILS, "New Israeli Sheqel"))
+    list.add(CurrencyRateEntity(Currency.INR.name, respo.rates.INR, "Indian Rupee"))
+    list.add(CurrencyRateEntity(Currency.ISK.name, respo.rates.ISK, "Iceland Krona"))
+    list.add(CurrencyRateEntity(Currency.JPY.name, respo.rates.JPY, "Yen"))
+    list.add(CurrencyRateEntity(Currency.KRW.name, respo.rates.KRW, "Won"))
+    list.add(CurrencyRateEntity(Currency.MXN.name, respo.rates.MXN, "Mexican Peso"))
+    list.add(CurrencyRateEntity(Currency.MYR.name, respo.rates.MYR, "Malaysian Ringgit"))
+    list.add(CurrencyRateEntity(Currency.NOK.name, respo.rates.NOK, "Norwegian Krone"))
+    list.add(CurrencyRateEntity(Currency.NZD.name, respo.rates.NZD, "New Zealand Dollar"))
+    list.add(CurrencyRateEntity(Currency.PHP.name, respo.rates.PHP, "Philippine Peso"))
+    list.add(CurrencyRateEntity(Currency.PLN.name, respo.rates.PLN, "Zloty"))
+    list.add(CurrencyRateEntity(Currency.RON.name, respo.rates.RON, "Romanian Leu"))
+    list.add(CurrencyRateEntity(Currency.RUB.name, respo.rates.RUB, "Russian Ruble"))
+    list.add(CurrencyRateEntity(Currency.SEK.name, respo.rates.SEK, "Swedish Krona"))
+    list.add(CurrencyRateEntity(Currency.SGD.name, respo.rates.SGD, "Singapore Dollar"))
+    list.add(CurrencyRateEntity(Currency.THB.name, respo.rates.THB, "Baht"))
+    list.add(CurrencyRateEntity(Currency.USD.name, respo.rates.USD, "US Dollar"))
+    list.find { it.currencyCode == respo.baseCurrency }?.currencyRate = 1.0
+    return list
 }

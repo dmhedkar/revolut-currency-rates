@@ -60,6 +60,11 @@ dependencies {
     implementation "com.google.dagger:dagger-android:2.25.4"
     kapt "com.google.dagger:dagger-android-processor:2.25.4"
 
+    //room
+    implementation "androidx.room:room-runtime:2.2.5"
+    kapt "androidx.room:room-compiler:2.2.5"
+    implementation "androidx.room:room-rxjava2:2.2.5"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
